@@ -1,0 +1,42 @@
+version: '3.1'
+
+services:
+  app:
+    container_name: api-main
+    restart: always
+    build:
+      context: $PWD/../api_main/
+      dockerfile: $PWD/../api_main/Dockerfile
+    environment: 
+      - PORT=4000
+      - NODE_PATH=src
+      - DATABASE_NAME=postgres
+      - DATABASE_USER=user
+      - DATABASE_PASSWORD=pass
+      - DATABASE_SCHEMA=z_tasks
+      - JWT_SECRET=secret
+    ports: 
+      - "4000:4000" 
+    links: 
+      - db_postgres
+  db_postgres:
+    image: postgres
+    restart: always
+    ports: 
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: user   
+      POSTGRES_PASSWORD: pass    
+  portainer:
+    image: portainer/portainer
+    command: -H unix:///var/run/docker.sock
+    restart: always
+    ports:
+      - 9000:9000
+      - 8000:8000
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+
+volumes:
+  portainer_data:

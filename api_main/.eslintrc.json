@@ -1,0 +1,60 @@
+{
+  "parserOptions": {
+    "project": "./tsconfig.json",
+    "ecmaVersion": 2020,
+    "sourceType": "module"
+  },
+  "extends": [
+    "airbnb-typescript"
+  ],
+  "rules": {
+    "indent": [
+      "error",
+      2
+    ],
+    "semi": [
+      "error",
+      "never"
+    ],
+    "no-unused-vars": [
+      "warn",
+      {
+        "argsIgnorePattern": "^_"
+      }
+    ],
+    "@typescript-eslint/no-unused-vars": [
+      "warn",
+      {
+        "argsIgnorePattern": "^_"
+      }
+    ],
+    "@typescript-eslint/semi": 0,
+    "import/no-extraneous-dependencies": 0,
+    "jsx-a11y/click-events-have-key-events": 0,
+    "comma-dangle": 0,
+    "implicit-arrow-linebreak": 0,
+    "@typescript-eslint/no-non-null-assertion": 0,
+    "@typescript-eslint/members-delimiter-style": 0,
+    "max-classes-per-file": 0,
+    "no-restricted-syntax": 0,
+    "max-len": [
+      "error",
+      {
+        "code": 120,
+        "tabWidth": 2
+      }
+    ]
+  },
+  "settings": {
+    "settings": {
+      "import/resolver": {
+        "typescript": {} // this loads <rootdir>/tsconfig.json to eslint
+      }
+    },
+    "import/parsers": {
+      "@typescript-eslint/parser": [
+        ".ts"
+      ]
+    }
+  }
+}

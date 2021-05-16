@@ -1,0 +1,48 @@
+{
+  "compilerOptions": {
+    "types": [
+      "node"
+    ],
+    "allowJs": true,
+    "esModuleInterop": true,
+    "target": "esnext",
+    "moduleResolution": "Node",
+    "resolveJsonModule": true,
+    "isolatedModules": false,
+    "module": "commonjs",
+    "sourceMap": true,
+    "rootDir": "src",
+    "outDir": "dist",
+    "lib": [
+      "esnext",
+      "dom",
+      "esnext.asynciterable"
+    ],
+    "removeComments": true,
+    "skipLibCheck": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "strict": true,
+    "alwaysStrict": true,
+    "checkJs": true,
+    "noImplicitAny": false,
+  },
+  "paths": {
+    "@globalContracts/*": "./contracts/*"
+  },
+  "typeRoots": [
+    "./src/@types"
+  ],
+  "include": [
+    "src"
+  ],
+  "exclude": [
+    "node_modules/*",
+    "./dist/*",
+    ".vscode"
+  ]
+}

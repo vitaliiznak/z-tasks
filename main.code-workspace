@@ -1,0 +1,16 @@
+{
+	"folders": [
+		{
+			"name": "api_main",
+			"path": "api_main"
+		},
+		{
+			"name": "web_app",
+			"path": "web_app"
+		},
+		{
+			"path": "..\\contacts_book"
+		}
+	],
+	"settings": {}
+}
