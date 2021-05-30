@@ -13,8 +13,7 @@ import { GET_INVITES } from 'queries'
 import { GetInvites } from 'queries/types/GetInvites'
 import { gSelectedBoard } from 'appState/appState'
 
-
-export default ({
+const InviteList = ({
   className = '',
   filter = {}
 }: {
@@ -51,6 +50,11 @@ export default ({
           {moment(expirationTime).format('DD/MM/YYYY, h:mm')}
         </div>
       ),
+    },
+    {
+      title: 'Token',
+      key: 'token',
+      dataIndex: 'token'
     },
     {
       title: 'Created by',
@@ -118,3 +122,6 @@ export default ({
     </>
   )
 }
+
+
+export default InviteList

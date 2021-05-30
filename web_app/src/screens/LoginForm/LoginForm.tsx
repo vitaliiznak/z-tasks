@@ -12,7 +12,6 @@ const cssFormItem = css`
 
 type FormProps = React.ComponentProps<typeof Form>
 export default (
-  // eslint-disable-next-line react/require-default-props
   { footerButtons = undefined }: { footerButtons?: React.ReactElement },
 ): React.ReactElement => {
   const [error, setError] = useState<any>(null)

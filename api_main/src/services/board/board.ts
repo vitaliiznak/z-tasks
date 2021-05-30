@@ -5,7 +5,7 @@ import { TABLES } from '../../contracts/db'
 import sql from '../../utils/sql'
 
 interface TContext {
-  insureDataFromBoardOfUser: string
+  performedByUser: string
 }
 
 interface TBoard {
@@ -28,13 +28,13 @@ const SELECT_FIELDS = sql`
 const getById = (id: string, ctx?: TContext): Promise<TBoard | null> => executeWithConnection(async (conn) => {
   let whereClause = sql` WHERE id = ${SqlString.escape(id)} `
 
-  if (ctx && ctx.insureDataFromBoardOfUser) {
+  if (ctx && ctx.performedByUser) {
     whereClause = sql`
         ${whereClause}
           AND ${TABLES.BOARD}.id IN
           (SELECT ${TABLES.BOARD_ACCOUNT}.board
             FROM ${TABLES.BOARD_ACCOUNT} WHERE ${TABLES.BOARD_ACCOUNT}.account
-            IN (${SqlString.escape(ctx.insureDataFromBoardOfUser)})
+            IN (${SqlString.escape(ctx.performedByUser)})
           )`
   }
 
@@ -63,17 +63,17 @@ interface TFilter {
 const getList = (filter: TFilter, ctx?: TContext): Promise<TBoard[]> => executeWithConnection(async (conn) => {
   let whereClause = sql`WHERE TRUE `
 
-  if (ctx && ctx.insureDataFromBoardOfUser) {
+  if (ctx && ctx.performedByUser) {
     whereClause = sql`
         ${whereClause}
           AND ${TABLES.BOARD}.id IN
           (SELECT ${TABLES.BOARD_ACCOUNT}.board
             FROM ${TABLES.BOARD_ACCOUNT} WHERE ${TABLES.BOARD_ACCOUNT}.account
-            IN (${SqlString.escape(ctx.insureDataFromBoardOfUser)})
+            IN (${SqlString.escape(ctx.performedByUser)})
           )`
   }
 
-  if (filter && filter.createdBy && filter.createdBy.length) {
+  if (filter?.createdBy?.length) {
     whereClause = sql`
       ${whereClause}
       AND ${TABLES.BOARD}.created_by
@@ -103,7 +103,7 @@ type TFilterCount = TFilter
 const count = (filter: TFilterCount): Promise<number> => executeWithConnection(async (conn) => {
   let whereClause = sql`WHERE TRUE `
 
-  if (filter && filter.createdBy && filter.createdBy.length) {
+  if (filter?.createdBy?.length) {
     whereClause = sql`
     ${whereClause}
     AND ${TABLES.BOARD}.created_by

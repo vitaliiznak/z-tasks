@@ -54,6 +54,7 @@ import { typeDefs as InviteDefs, resolvers as InviteResolvers } from './domain/i
 import { typeDefs as CommentDefs, resolvers as CommentResolvers } from './domain/comment'
 import { typeDefs as BoardDefs, resolvers as BoardResolvers } from './domain/board'
 import { AuthDirective, EnsureuserIsBoardMemberDirective } from './directives/Auth'
+import type { TAccountWithToken } from './services/account/account'
 
 // import authRoutes from "./routes/auth";
 // Construct a schema, using GraphQL schema language
@@ -67,6 +68,8 @@ input UploadWrapper {
   originFileObj: Upload!
 }
 */
+
+export type TAuthorizedUser = TAccountWithToken
 
 const typeDefs = [
   gql`
@@ -224,7 +227,8 @@ const contextServer = async (context) => {
   if (!user) {
     return context
   }
-  return { user: { ...user, token }, ...context }
+  const userToContext: TAccountWithToken = { ...user, token }
+  return { user: userToContext, ...context }
 }
 
 /* const schemaAux = makeExecutableSchema({

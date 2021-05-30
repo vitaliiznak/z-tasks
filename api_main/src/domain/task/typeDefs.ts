@@ -16,9 +16,9 @@ export default gql`
   }
   
   input TaskListFilterInput {
-    assigners: [ID]
-    createdBy: [ID]
-    priorities: [TaskPriorityEnum]
+    assignersAnyOf: [ID]
+    createdByAnyOf: [ID]
+    prioritiesAnyOf: [TaskPriorityEnum]
     searchTitle: String
     searchDescription: String
     isArchived: Boolean
@@ -26,9 +26,9 @@ export default gql`
   }
 
   input TaskCountFilterInput {
-    assigners: [ID]
-    createdBy: [ID]
-    priorities: [TaskPriorityEnum]
+    assignersAnyOf: [ID]
+    createdByAnyOf: [ID]
+    prioritiesAnyOf: [TaskPriorityEnum]
     searchTitle: String
     searchDescription: String
     isArchived: Boolean

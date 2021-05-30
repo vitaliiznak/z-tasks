@@ -18,7 +18,7 @@ const { Paragraph, Title } = Typography
 export default ({ id } : { id: string }) => {
   const [UnarchiveTask] = useMutation(UNARCHIVE_TASK)
   const { loading: loadingTask, error: errorTask, data: dataTask } = useQuery<GetTask>(GET_TASK, { variables: { id } })
-  const [showAssigmentModal, setAssigmentModal] = useState(false)
+  const [assignTaskTaskModalParams, setAssignTaskTaskModal] = useState<{ taskId: string } | null>(null)
 
   const onUnarchiveTask = () => {
     UnarchiveTask({
@@ -33,12 +33,12 @@ export default ({ id } : { id: string }) => {
   }
 
   const onFinishAssigment = () => {
-    setAssigmentModal(false)
+    setAssignTaskTaskModal(null)
     message.success('Assigment changed')
   }
 
   const onChangeAssigners = () => {
-    setAssigmentModal(true)
+    setAssignTaskTaskModal({ taskId: id })
   }
 
   if (loadingTask) return <Spin size="large" />
@@ -81,11 +81,11 @@ export default ({ id } : { id: string }) => {
 
   return (
     <>
-      { showAssigmentModal && (
+      { Boolean(assignTaskTaskModalParams) && (
         <Modal
           maskClosable={false}
           onCancel={() => {
-            setAssigmentModal(false)
+            setAssignTaskTaskModal(null)
           }}
           title={dataTask?.taskGetById?.title}
           visible
@@ -147,7 +147,12 @@ export default ({ id } : { id: string }) => {
         >
           <small>
             Created
+            {' '}
             {moment(createdAt).fromNow()}
+            <br />
+            by
+            {' '}
+            {`${createdBy.fullName} ${createdBy.email}` }
           </small>
           {isArchived ? (
             <Button

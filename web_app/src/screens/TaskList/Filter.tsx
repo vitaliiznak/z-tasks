@@ -15,16 +15,16 @@ const cssFormItem = css`
   width: 250px;
 `
 export type TypeTaskFilter = {
-  assigners?: string[],
-  createdBy?: string[],
-  priorities?: string[],
+  assignersAnyOf?: string[],
+  createdByAnyOf?: string[],
+  prioritiesAnyOf?: string[],
   searchTitle?: string
   searchDescription?: string
   isArchived?: boolean
 }
 type TypeProps = {
   // eslint-disable-next-line no-unused-vars
-  onFilter?: (_filter: TypeTaskFilter)=>void
+  onFilter?: (_filter: TypeTaskFilter) => void
 }
 
 export default ({ onFilter = () => {} }: TypeProps) => {
@@ -32,10 +32,10 @@ export default ({ onFilter = () => {} }: TypeProps) => {
 
   const onValuesChange = (_changedValues: any, allValues: any) => {
     const {
-      assigners, priorities, searchTerm, includeDescription, createdBy,
+      assignersAnyOf, prioritiesAnyOf, createdByAnyOf, searchTerm, includeDescription
     } = allValues
 
-    const filter: TypeTaskFilter = { assigners, priorities, createdBy }
+    const filter: TypeTaskFilter = { assignersAnyOf, prioritiesAnyOf, createdByAnyOf }
     if (searchTerm && searchTerm.length) {
       filter.searchTitle = searchTerm
     }
@@ -69,7 +69,7 @@ export default ({ onFilter = () => {} }: TypeProps) => {
       <div className={css`display: flex;`}>
         <Form.Item
           label="Report to:"
-          name="createdBy"
+          name="createdByAnyOf"
           className={cssFormItem}
         >
           <Select
@@ -100,13 +100,13 @@ export default ({ onFilter = () => {} }: TypeProps) => {
 
         <Form.Item
           label="Assigners"
-          name="assigners"
+          name="assignersAnyOf"
           className={cssFormItem}
         >
           <Select
             showSearch
             mode="multiple"
-            placeholder="select one assigners"
+            placeholder="filter by assigners"
             optionLabelProp="label"
           >
             {users.map(({ id, fullName, email }) => (
@@ -131,7 +131,7 @@ export default ({ onFilter = () => {} }: TypeProps) => {
 
         <Form.Item
           label="Priorities"
-          name="priorities"
+          name="prioritiesAnyOf"
           className={cssFormItem}
         >
           <Select
@@ -171,7 +171,6 @@ export default ({ onFilter = () => {} }: TypeProps) => {
           </Checkbox>
         </Form.Item>
       </div>
-
     </Form>
   )
 }

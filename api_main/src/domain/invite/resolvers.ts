@@ -1,7 +1,9 @@
 import moment from 'moment'
+import { TAuthorizedUser } from '../../server'
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import InviteService from '../../services/invite'
 import UserService from '../../services/user'
+import BoardService from '../../services/board'
 
 const inviteCount = (
   _prev,
@@ -13,18 +15,22 @@ const inviteCount = (
 const inviteGetList = (
   _prev,
   { filter },
-  { user },
+  { user }: {
+    user: TAuthorizedUser
+  },
   _info,
 ) => {
-  return InviteService.getList(filter, { insureDataFromBoardOfUser: user.id })
+  return InviteService.getList(filter, { performedByUser: user.id })
 }
 
 const inviteGetById = (
   _prev,
   { id },
-  { user },
+  { user }: {
+    user: TAuthorizedUser
+  },
   _info,
-) => InviteService.getById(id, { insureDataFromBoardOfUser: user.id })
+) => InviteService.getById(id, { performedByUser: user.id })
 
 const inviteCreate = (
   _prev,
@@ -35,7 +41,9 @@ const inviteCreate = (
       description,
     },
   },
-  { user },
+  { user }: {
+    user: TAuthorizedUser
+  },
   _info,
 ): Promise<any> => InviteService.create({
   boardId,
@@ -45,10 +53,18 @@ const inviteCreate = (
 
 const inviteJoinBoard = (
   _prev,
-  { id, input },
-  _context,
+  {
+    input:
+    {
+      id,
+      token
+    },
+  },
+  { user }: {
+    user: TAuthorizedUser
+  },
   _info,
-) => InviteService.update(id, input) // TaskService.update(id)
+) => InviteService.joinBoard({ id, token }, { performedByUser: user.id }) // TaskService.update(id)
 
 const inviteInvalidate = (
   _prev,
@@ -68,7 +84,12 @@ export default {
       const date = moment()
       // Filter the hardcoded array of books to only include
       // books that are located at the correct branch
-      return date.isAfter(expirationTime) ? 'EXPIRED' : state
+      return state === 'NEW' && date.isAfter(expirationTime) ? 'EXPIRED' : state
+    },
+    board({ boardId }) {
+      // Filter the hardcoded array of books to only include
+      // books that are located at the correct branch
+      return BoardService.getById(boardId)
     },
   },
   Query: {

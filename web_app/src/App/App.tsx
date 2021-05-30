@@ -6,7 +6,7 @@ import {
   ConfigProvider,
 } from 'antd'
 import {
-  HashRouter as Router,
+  BrowserRouter as Router,
 } from 'react-router-dom'
 import MainRoutes from './Routes'
 import client from '../apolloClient'

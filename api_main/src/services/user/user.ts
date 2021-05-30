@@ -4,7 +4,7 @@ import { TABLES } from '../../contracts/db'
 import sql from '../../utils/sql'
 
 interface TContext {
-  insureDataFromBoardOfUser: string
+  performedByUser: string
 }
 
 interface TUser {
@@ -31,7 +31,7 @@ const SELECT_FIELDS = sql`
 const getById = (id: string, ctx?: TContext): Promise<TUser | null> => executeWithConnection(async (conn) => {
   let whereClause = sql`WHERE id = ${SqlString.escape(id)} `
 
-  if (ctx && ctx.insureDataFromBoardOfUser) {
+  if (ctx && ctx.performedByUser) {
     whereClause = sql`
         ${whereClause}
           AND 
@@ -39,7 +39,7 @@ const getById = (id: string, ctx?: TContext): Promise<TUser | null> => executeWi
           IN
           (SELECT ${TABLES.BOARD_ACCOUNT}.account
             FROM ${TABLES.BOARD_ACCOUNT} WHERE ${TABLES.BOARD_ACCOUNT}.account
-            IN (${SqlString.escape(ctx.insureDataFromBoardOfUser)})
+            IN (${SqlString.escape(ctx.performedByUser)})
           )`
   }
 
@@ -56,7 +56,7 @@ const getById = (id: string, ctx?: TContext): Promise<TUser | null> => executeWi
 const getList = (ctx: TContext): Promise<TUser[]> => executeWithConnection(async (conn) => {
   let whereClause = sql` WHERE TRUE `
 
-  if (ctx && ctx.insureDataFromBoardOfUser) {
+  if (ctx && ctx.performedByUser) {
     whereClause = sql`
         ${whereClause}
           AND 
@@ -64,7 +64,7 @@ const getList = (ctx: TContext): Promise<TUser[]> => executeWithConnection(async
           IN
           (SELECT ${TABLES.BOARD_ACCOUNT}.account
             FROM ${TABLES.BOARD_ACCOUNT} WHERE ${TABLES.BOARD_ACCOUNT}.account
-            IN (${SqlString.escape(ctx.insureDataFromBoardOfUser)})
+            IN (${SqlString.escape(ctx.performedByUser)})
           )`
   }
 

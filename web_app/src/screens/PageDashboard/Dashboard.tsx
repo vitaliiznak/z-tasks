@@ -187,6 +187,7 @@ function Dashboard() {
         <Modal
           maskClosable={false}
           onCancel={() => {
+            setColumns(assignTaskTaskModalParams?.previousColumnsState)
             setAssignTaskTaskModal(null)
           }}
           title="Do you want to change assigneers?"

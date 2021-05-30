@@ -23,6 +23,7 @@ const uploadLink = createUploadLink({
 
 const linkErrorGeneral = onError(({ graphQLErrors, networkError }) => {
   let isPotentialExpiredToken = false
+  const token = localStorage.getItem(AUTH_TOKEN_LOCALSTORAGE_KEY)
   if (graphQLErrors) {
     graphQLErrors.forEach(({
       message, locations, extensions, path,
@@ -30,7 +31,9 @@ const linkErrorGeneral = onError(({ graphQLErrors, networkError }) => {
       console.error(
         `[GraphQL error]: Message: ${message}, Location: ${JSON.stringify(locations)}, Path: ${JSON.stringify(path)}`,
       )
-      if (extensions?.code === 'UNAUTHENTICATED' && !path?.includes('authLogin')) {
+      if (token
+        && extensions?.code === 'UNAUTHENTICATED'
+        && !path?.includes('authLogin')) {
         isPotentialExpiredToken = true
       }
     })
@@ -39,7 +42,6 @@ const linkErrorGeneral = onError(({ graphQLErrors, networkError }) => {
     console.error(`[Network error]: ${networkError}`)
   }
 
-  const token = localStorage.getItem(AUTH_TOKEN_LOCALSTORAGE_KEY)
   if (isPotentialExpiredToken && token && token.length) {
     openModalRelogin()
   }

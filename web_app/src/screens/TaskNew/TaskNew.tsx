@@ -19,7 +19,7 @@ const normFile: FormItemProps['getValueFromEvent'] = (e) => (Array.isArray(e) ? 
 type FormProps = React.ComponentProps<typeof Form>
 export default ({
   boardId,
-  title,
+  title: titleCard,
   className = '',
   form: formArg,
   footer: Footer = ((props: any) => (
@@ -51,7 +51,7 @@ export default ({
 
   const onFinish: FormProps['onFinish'] = (values) => {
     const {
-      title: titleArg,
+      title,
       description,
       attachments,
       priority,
@@ -71,7 +71,7 @@ export default ({
       }))
 
     const input = {
-      titleArg,
+      title,
       description,
       assigners,
       attachments: attachmentsFormatted,
@@ -91,7 +91,7 @@ export default ({
 
   return (
     <Card
-      title={title}
+      title={titleCard}
       className={`
         ${className}
     }`}

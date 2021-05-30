@@ -11,8 +11,7 @@ import { gSelectedBoard } from 'appState/appState'
 
 const { Paragraph, Title } = Typography
 
-
-export default ({
+const TaskCard = ({
   index,
   task: {
     id,
@@ -106,3 +105,5 @@ export default ({
     </Draggable>
   )
 }
+
+export default TaskCard

@@ -106,7 +106,7 @@ export default ({
             render={() => (
               <InviteList
                 filter={{
-                  state: ['NEW']
+                  stateAnyOf: ['NEW']
                 }}
               />
             )}
@@ -117,7 +117,7 @@ export default ({
             render={() => (
               <InviteList
                 filter={{
-                  state_NOT: ['NEW']
+                  state_NOTAnyOf: ['NEW']
                 }}
               />
             )}

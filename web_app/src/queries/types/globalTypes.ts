@@ -71,9 +71,9 @@ export interface InviteCreateInput {
 }
 
 export interface TaskCountFilterInput {
-  assigners?: (string | null)[] | null;
-  createdBy?: (string | null)[] | null;
-  priorities?: (TaskPriorityEnum | null)[] | null;
+  assignersAnyOf?: (string | null)[] | null;
+  createdByAnyOf?: (string | null)[] | null;
+  prioritiesAnyOf?: (TaskPriorityEnum | null)[] | null;
   searchTitle?: string | null;
   searchDescription?: string | null;
   isArchived?: boolean | null;
@@ -89,9 +89,9 @@ export interface TaskCreateInput {
 }
 
 export interface TaskListFilterInput {
-  assigners?: (string | null)[] | null;
-  createdBy?: (string | null)[] | null;
-  priorities?: (TaskPriorityEnum | null)[] | null;
+  assignersAnyOf?: (string | null)[] | null;
+  createdByAnyOf?: (string | null)[] | null;
+  prioritiesAnyOf?: (TaskPriorityEnum | null)[] | null;
   searchTitle?: string | null;
   searchDescription?: string | null;
   isArchived?: boolean | null;

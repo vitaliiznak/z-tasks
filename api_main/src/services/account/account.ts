@@ -8,7 +8,9 @@ import { TABLES } from '../../contracts/db'
 import { saveFileList } from '../../utils/files'
 import sql from '../../utils/sql'
 
-interface TAccount {
+
+
+export type TAccount = {
   id: string
   email: string
   fullName: string
@@ -22,7 +24,7 @@ interface TAccount {
   }
 }
 
-interface TAccountWithToken extends TAccount {
+export interface TAccountWithToken extends TAccount {
   token: string
 }
 

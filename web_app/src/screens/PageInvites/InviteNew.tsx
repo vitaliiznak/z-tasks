@@ -27,8 +27,8 @@ const InviteNew = ({
     createInvite({
       variables: {
         input: { boardId: board!.id, ...values },
-      }
-      // refetchQueries: ['GetBoards', 'GetBoard'],
+      },
+      refetchQueries: ['GetInvites'],
     }).then((res) => {
       message.success('Board has been created!')
       const inviteCreated = res.data.inviteCreate
@@ -54,7 +54,7 @@ const InviteNew = ({
 
       </Form.Item>
       <p className={css`padding-bottom: 12px;`}>
-        Send the link and the token to a person you would like to invite
+        Send the link and the token to the person you would like to invite
         <br />
         <br />
         <p>
@@ -89,7 +89,9 @@ const InviteNew = ({
       }}
     >
       <h4>
-        Add some invitation text for receiver
+        Generate invitation link to this board.
+        <br />
+        Add an invitation text for receiver
         <br />
         ( Hi, welcome to our board ... )
       </h4>

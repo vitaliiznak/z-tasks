@@ -8,6 +8,7 @@ export default gql`
   }
 
   input InviteJoinBoardInput {
+    id: ID!
     token: String!
   }
 
@@ -15,8 +16,8 @@ export default gql`
     board: ID
     createdBy: String
     expirationTime: Date
-    state: [String]
-    state_NOT: [String]
+    stateAnyOf: [String]
+    state_NOTAnyOf: [String]
   }
 
   input InviteCountFilterInput {
@@ -28,8 +29,7 @@ export default gql`
   type Invite {
     id: ID!
     account: ID
-
-    boardId: ID!
+    board: Board!
     token: String!
     state: String!
     description: String!
@@ -51,7 +51,7 @@ export default gql`
     inviteInvalidate( id: ID! ): ID!  @auth
     inviteJoinBoard( 
       input: InviteJoinBoardInput!
-    ): Invite!
+    ): Invite
   }
 
 `

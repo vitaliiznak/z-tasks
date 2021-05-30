@@ -67,13 +67,13 @@ const getList = (filter: {
 }, withReplies: boolean): Promise<TComment[]> => executeWithConnection(async (conn) => {
   let whereClause = sql`WHERE TRUE `
 
-  if (filter && filter.createdBy && filter.createdBy.length) {
+  if (filter?.createdBy?.length) {
     whereClause = sql`
           ${whereClause}
           AND ${TABLES.COMMENT}.created_by = ${escape(filter.createdBy)} `
   }
 
-  if (filter && filter.task) {
+  if (filter?.task) {
     whereClause = sql`
           ${whereClause}
           AND ${TABLES.COMMENT}.task = ${escape(filter.task)} `
@@ -124,13 +124,13 @@ const count = (filter: {
   task: string
 }): Promise<number> => executeWithConnection(async (conn) => {
   let whereClause = sql`WHERE TRUE`
-  if (filter && filter.createdBy && filter.createdBy.length) {
+  if (filter?.createdBy?.length) {
     whereClause = sql`
         ${whereClause}
         AND ${TABLES.COMMENT}.created_by = ${escape(filter.createdBy)} `
   }
 
-  if (filter && filter.task) {
+  if (filter?.task) {
     whereClause = sql`
         ${whereClause}
         AND ${TABLES.COMMENT}.task = ${escape(filter.task)} `

@@ -20,7 +20,7 @@ margin-left: auto;
 margin-right: auto;
 `
 
-export default ({
+const TaskList = ({
   title = null,
   filter = {},
   className = '',
@@ -179,3 +179,5 @@ export default ({
     </Card>
   )
 }
+
+export default TaskList

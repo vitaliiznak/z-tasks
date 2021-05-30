@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
+import { TAuthorizedUser } from '../../server'
 import TaskService from '../../services/task'
 import UserService from '../../services/user'
 
@@ -7,21 +8,25 @@ const taskCount = (
   { filter }, // {req, res}
   { user },
   _info,
-) => TaskService.count(filter, { insureDataFromBoardOfUser: user.id })
+) => TaskService.count(filter, { performedByUser: user.id })
 
 const taskGetList = (
   _prev,
   { filter }, // {req, res}
-  { user },
+  { user }: {
+    user: TAuthorizedUser
+  },
   _info,
-) => TaskService.getList(filter, { insureDataFromBoardOfUser: user.id })
+) => TaskService.getList(filter, { performedByUser: user.id })
 
 const taskGetById = (
   _prev,
   { id }, // {req, res}
-  { user },
+  { user }: {
+    user: TAuthorizedUser
+  },
   _info,
-) => TaskService.getById(id, { insureDataFromBoardOfUser: user.id })
+) => TaskService.getById(id, { performedByUser: user.id })
 
 const taskCreate = (
   _prev,
@@ -36,7 +41,9 @@ const taskCreate = (
       assigners,
     },
   }, // {req, res}
-  { user },
+  { user }: {
+    user: TAuthorizedUser
+  },
   _info,
 ): Promise<any> => TaskService.create({
   board,

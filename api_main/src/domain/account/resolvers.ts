@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import { AuthenticationError } from 'apollo-server'
+import { TAuthorizedUser } from '../../server'
 import AccountService from '../../services/account'
 
 const accountSignup = async (
@@ -30,7 +31,9 @@ const accountLogin = async (
 const accountMe = (
   _prev,
   _args, // {req, res}
-  { user },
+  { user }: {
+    user: TAuthorizedUser
+  },
   _info,
 ) => (user || null)
 

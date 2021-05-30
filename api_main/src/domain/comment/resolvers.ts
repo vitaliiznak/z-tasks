@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
+import { TAuthorizedUser } from '../../server'
 import CommentService from '../../services/comment'
 import UserService from '../../services/user'
 
@@ -32,7 +33,9 @@ const commentCreate = (
       task,
     },
   }, // {req, res}
-  { user },
+  { user }: {
+    user: TAuthorizedUser
+  },
   _info,
 ): Promise<any> => CommentService.create({
   content,
@@ -49,7 +52,9 @@ const commentReplyCreate = (
       previous,
     },
   }, // {req, res}
-  { user },
+  { user }: {
+    user: TAuthorizedUser
+  },
   _info,
 ): Promise<any> => CommentService.createReply({
   content,

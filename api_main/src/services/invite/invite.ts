@@ -7,11 +7,12 @@ import { ApolloError } from 'apollo-server'
 import { executeWithConnection } from '../../dbConnection'
 import { TABLES } from '../../contracts/db'
 import sql from '../../utils/sql'
+import { TAuthorizedUser } from '../../server'
 
 const randomBytesP = util.promisify(crypto.randomBytes)
 
 interface TContext {
-  insureDataFromBoardOfUser: string
+  performedByUser: string
 }
 
 interface TInvite {
@@ -40,13 +41,13 @@ const SELECT_FIELDS = sql`
 
 const getById = (id: string, ctx?: TContext): Promise<TInvite | null> => executeWithConnection(async (conn) => {
   let whereClause = sql` WHERE id = ${SqlString.escape(id)} `
-  if (ctx && ctx.insureDataFromBoardOfUser) {
+  if (ctx && ctx.performedByUser) {
     whereClause = sql`
         ${whereClause}
           AND ${TABLES.INVITE_TO_BOARD}.board IN
           (SELECT ${TABLES.BOARD_ACCOUNT}.board
             FROM ${TABLES.BOARD_ACCOUNT} WHERE ${TABLES.BOARD_ACCOUNT}.account
-            IN (${SqlString.escape(ctx.insureDataFromBoardOfUser)})
+            IN (${SqlString.escape(ctx.performedByUser)})
           )`
   }
 
@@ -61,51 +62,70 @@ const getById = (id: string, ctx?: TContext): Promise<TInvite | null> => execute
 })
 
 type TFilter = {
-  createdBy: string[],
+  createdByAnyOf: string[],
   board: string
-  state: string[]
-  state_NOT: string[]
+  stateAnyOf: string[]
+  state_NOTAnyOf: string[]
 }
 const getList = (filter: TFilter, ctx?: TContext): Promise<TInvite[]> => executeWithConnection(async (conn) => {
   let whereClause = sql`WHERE TRUE `
 
-  console.log('\n\n\n\n filter', filter)
-
-  if (ctx && ctx.insureDataFromBoardOfUser) {
+  if (ctx && ctx.performedByUser) {
     whereClause = sql`
         ${whereClause}
           AND ${TABLES.INVITE_TO_BOARD}.board IN
           (SELECT ${TABLES.BOARD_ACCOUNT}.board
             FROM ${TABLES.BOARD_ACCOUNT} WHERE ${TABLES.BOARD_ACCOUNT}.account
-            IN (${SqlString.escape(ctx.insureDataFromBoardOfUser)})
+            IN (${SqlString.escape(ctx.performedByUser)})
           )`
   }
 
-  if (filter && filter.createdBy && filter.createdBy.length) {
+  if (filter?.createdByAnyOf?.length) {
     whereClause = sql`
       ${whereClause}
       AND ${TABLES.INVITE_TO_BOARD}.created_by
-      IN(${filter.createdBy.map((el) => SqlString.escape(el)).join(', ')})`
+      IN(${filter.createdByAnyOf.map((el) => SqlString.escape(el)).join(', ')})`
   }
 
-  if (filter && filter.createdBy && filter.createdBy.length) {
+  if (filter?.createdByAnyOf?.length) {
     whereClause = sql`
       ${whereClause}
       AND ${TABLES.INVITE_TO_BOARD}.board
       IN(
-        ${filter.createdBy.map((el) => SqlString.escape(el)).join(', ')})`
+        ${filter.createdByAnyOf.map((el) => SqlString.escape(el)).join(', ')})`
+  }
+  // @TODO change this logic
+  if (filter?.state_NOTAnyOf) {
+    if (filter.state_NOTAnyOf.includes('NEW')) { // or any other not expired state
+      whereClause = sql`
+        ${whereClause}
+        AND ( 
+          ${TABLES.INVITE_TO_BOARD}.expiration_time <= now() 
+          OR ${TABLES.INVITE_TO_BOARD}.state != 'NEW' 
+        )
+        `
+    } else {
+      whereClause = sql`
+        ${whereClause}
+        AND ${TABLES.INVITE_TO_BOARD}.state NOT IN (${filter.state_NOTAnyOf.map(
+        (el) => SqlString.escape(el)).join(', ')})`
+    }
   }
 
-  if (filter && filter.state_NOT) {
-    whereClause = sql`
-      ${whereClause}
-      AND ${TABLES.INVITE_TO_BOARD}.state NOT IN (${filter.state_NOT.map((el) => SqlString.escape(el)).join(', ')})`
-  }
+  if (filter?.stateAnyOf) {
+    let whereClausesOr: string[] = []
+    let statyArray = filter.stateAnyOf
+    if (statyArray.includes('EXPIRED')) {
+      whereClausesOr.push(sql`(${TABLES.INVITE_TO_BOARD}.expiration_time <= now() AND ${TABLES.INVITE_TO_BOARD}.state = 'NEW' )`)
+      statyArray = statyArray.filter(el => el != 'EXPIRED')
+    }
 
-  if (filter && filter.state) {
-    whereClause = sql`
-      ${whereClause}
-      AND ${TABLES.INVITE_TO_BOARD}.state IN (${filter.state.map((el) => SqlString.escape(el)).join(', ')})`
+    if (statyArray.includes('NEW')) {
+      whereClausesOr.push(sql`( ${TABLES.INVITE_TO_BOARD}.expiration_time >= now() AND ${TABLES.INVITE_TO_BOARD}.state = 'NEW' )`)
+      statyArray = statyArray.filter(el => el != 'NEW')
+    }
+    whereClausesOr.push(sql`${TABLES.INVITE_TO_BOARD}.state IN (${statyArray.map((el) => SqlString.escape(el)).join(', ')})`)
+    whereClause = `${whereClause} AND (${whereClausesOr.join(' OR ')})`
   }
 
   const sqlQuery = sql`
@@ -124,7 +144,7 @@ type TFilterCount = TFilter
 const count = (filter: TFilterCount): Promise<number> => executeWithConnection(async (conn) => {
   let whereClause = sql`WHERE TRUE `
 
-  if (filter && filter.board) {
+  if (filter?.board) {
     whereClause = sql`
     ${whereClause}
     AND ${TABLES.INVITE_TO_BOARD}.board
@@ -132,12 +152,12 @@ const count = (filter: TFilterCount): Promise<number> => executeWithConnection(a
       ${[filter.board].map((el) => SqlString.escape(el)).join(', ')})`
   }
 
-  if (filter && filter.createdBy && filter.createdBy.length) {
+  if (filter?.createdByAnyOf?.length) {
     whereClause = sql`
     ${whereClause}
     AND ${TABLES.INVITE_TO_BOARD}.board
     IN(
-      ${filter.createdBy.map((el) => SqlString.escape(el)).join(', ')})`
+      ${filter.createdByAnyOf.map((el) => SqlString.escape(el)).join(', ')})`
   }
 
   const sqlQuery = sql`
@@ -148,6 +168,7 @@ const count = (filter: TFilterCount): Promise<number> => executeWithConnection(a
     `
 
   const result = await conn.query(sqlQuery)
+
   return result.rows.length ? result.rows[0].count : null
 })
 
@@ -246,11 +267,83 @@ const remove = (id: string): Promise<string> => executeWithConnection(async (con
   return id
 })
 
+
+const joinBoard = (
+  { id, token }: {
+    id: string
+    token: string
+  },
+  ctx?: TContext
+): Promise<TInvite> => executeWithConnection(async (conn) => {
+  let whereClause = sql` 
+    WHERE   ${TABLES.INVITE_TO_BOARD}.id = ${SqlString.escape(id)} 
+      AND ${TABLES.INVITE_TO_BOARD}.token = ${SqlString.escape(token)} 
+      AND ${TABLES.INVITE_TO_BOARD}.expiration_time >= now() 
+      AND ${TABLES.INVITE_TO_BOARD}.state = 'NEW'
+  `
+  const sqlStr = sql`
+    UPDATE ${TABLES.INVITE_TO_BOARD}
+      SET state = 'USED' 
+      ${whereClause}
+    RETURNING ${SELECT_FIELDS};
+  `
+  await conn.query('BEGIN;')
+
+  try {
+    const updatedInviteResult = await conn.query(sqlStr)
+    const updatedInvite = updatedInviteResult.rows.length ? updatedInviteResult.rows[0] : null
+    if (updatedInvite) {
+      const BoardAccountInsertRow = [
+        SqlString.escape(updatedInvite.boardId),
+        SqlString.escape(ctx?.performedByUser),
+      ].join(', ')
+      const BoardAccountInsertValues = [BoardAccountInsertRow]
+      const sqlStrBoardAccount = sql`
+          INSERT INTO ${TABLES.BOARD_ACCOUNT}  
+          ( 
+            board, 
+            account
+          )
+          VALUES ${BoardAccountInsertValues.map((row) => `( ${row} )`).join(', ')}
+          RETURNING *;
+        `
+      await conn.query(sqlStrBoardAccount)
+    }
+    await conn.query('COMMIT')
+    return updatedInvite ? getById(updatedInvite.id) : null
+  } catch (err) {
+    await conn.query('ROLLBACK')
+    throw err
+  }
+  /*  const set: Array<string> = []
+  if (title !== undefined) {
+    set.push(sql`title = ${SqlString.escape(title)}`)
+  }
+  if (description !== undefined) {
+    set.push(sql`description = ${SqlString.escape(description)}`)
+  }
+  if (set.length) {
+    const sqlStr = sql` 
+          UPDATE ${TABLES.BOARD}  
+          SET  
+            ${set.join(',')} 
+          WHERE id = ${SqlString.escape(id)} 
+          RETURNING ${SELECT_FIELDS}; 
+        `
+    await conn.query(sqlStr)
+  }
+  return getById(id) */
+  /**
+   * Update token state
+   *  
+   *  */
+})
+
 export default {
   getById,
   getList,
   count,
-
+  joinBoard,
   update,
   create,
   remove,

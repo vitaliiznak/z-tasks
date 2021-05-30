@@ -14,7 +14,6 @@ mutation Login(
   }
 }
 `
-
 export const SIGN_UP = gql`
 mutation SignUp(
     $input: AccountSignupInput!
@@ -24,6 +23,20 @@ mutation SignUp(
     email,
     fullName,
     token
+  }
+}
+`
+
+export const GET_ME = gql`
+query accountMe {
+  accountMe {
+    id
+    fullName
+    email
+    avatar {
+      uri
+      filename
+    }
   }
 }
 `
@@ -195,19 +208,6 @@ export const COUNT_TASKS = gql`
   }
 `
 
-export const GET_ME = gql`
-query accountMe {
-  accountMe {
-    id
-    fullName
-    email
-    avatar {
-      uri
-      filename
-    }
-  }
-}
-`
 
 export const GET_USERS = gql`
   query GetUsers {
@@ -307,11 +307,40 @@ export const REMOVE_TASK = gql`
     }
   `
 
+
 export const CREATE_INVITE = gql`
 mutation CreateInvite($input: InviteCreateInput!) {
   inviteCreate(input: $input) {
     id
-    boardId
+    board {
+      id
+      title
+    }
+    token
+    state
+    expirationTime
+    description
+    createdBy {
+        id
+        fullName
+        email
+        avatar {
+          uri
+        }
+      }
+    createdAt
+  }
+}
+`
+
+export const GET_INVITES = gql`
+query GetInvites ($filter: InviteListFilterInput) {
+  inviteGetList(filter: $filter) {
+    id
+    board {
+      id
+      title
+    }
     token
     state
     expirationTime
@@ -330,11 +359,40 @@ mutation CreateInvite($input: InviteCreateInput!) {
 `
 
 
-export const GET_INVITES = gql`
-query GetInvites ($filter: InviteListFilterInput) {
-  inviteGetList(filter: $filter) {
+export const GET_INVITE_BY_ID = gql`
+query GetInvites ($id: ID!) {
+  inviteGetById(id: $id) {
     id
-    boardId
+    board {
+      id
+      title
+    }
+    token
+    state
+    expirationTime
+    description
+    createdBy {
+        id
+        fullName
+        email
+        avatar {
+          uri
+        }
+      }
+    createdAt
+  }
+}
+`
+
+
+export const JOIN_BOARD = gql`
+mutation InviteJoinBoard($input: InviteJoinBoardInput!) {
+  inviteJoinBoard(input: $input) {
+    id
+    board {
+      id
+      title
+    }
     token
     state
     expirationTime

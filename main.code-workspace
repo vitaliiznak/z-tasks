@@ -7,9 +7,6 @@
 		{
 			"name": "web_app",
 			"path": "web_app"
-		},
-		{
-			"path": "..\\contacts_book"
 		}
 	],
 	"settings": {}

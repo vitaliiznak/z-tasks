@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
+import { TAuthorizedUser } from '../../server'
 import BoardService from '../../services/board'
 import UserService from '../../services/user'
 
@@ -12,16 +13,20 @@ const boardCount = (
 const boardGetList = (
   _prev,
   { filter }, // {req, res}
-  { user },
+  { user }: {
+    user: TAuthorizedUser
+  },
   _info,
-) => BoardService.getList(filter, { insureDataFromBoardOfUser: user.id })
+) => BoardService.getList(filter, { performedByUser: user.id })
 
 const boardGetById = (
   _prev,
   { id }, // {req, res}
-  { user },
+  { user }: {
+    user: TAuthorizedUser
+  },
   _info,
-) => BoardService.getById(id, { insureDataFromBoardOfUser: user.id })
+) => BoardService.getById(id, { performedByUser: user.id })
 
 const boardCreate = (
   _prev,
@@ -31,7 +36,9 @@ const boardCreate = (
       title,
     },
   }, // {req, res}
-  { user },
+  { user }: {
+    user: TAuthorizedUser
+  },
   _info,
 ): Promise<any> => BoardService.create({
   title,

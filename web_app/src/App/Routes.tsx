@@ -11,7 +11,7 @@ import {
 import { css } from '@emotion/css'
 import { useQuery } from '@apollo/client'
 
-import PageLogin from 'screens/PageLogin'
+import PageLogin from 'screens/PageEnter'
 import PageUsers from 'screens/PageUserList'
 import PageTasks from 'screens/PageTaskList'
 import PageTask from 'screens/PageTask'
@@ -21,15 +21,14 @@ import PageSelectBoard from 'screens/PageSelectBoard'
 import PageBoardList from 'screens/PageBoardList'
 import PageInvites from 'screens/PageInvites'
 import AccountSettings from 'screens/PageAccountSettings'
-
 import { useAuthToken } from 'hooks/useAuth'
-
 import { GET_BOARD, GET_BOARDS, GET_ME } from 'queries'
 import { gBoards, gSelectedBoard, gUserMe } from 'appState/appState'
 import { GetBoard } from 'queries/types/GetBoard'
 import { accountMe } from 'queries/types/accountMe'
 import { GetBoards } from 'queries/types/GetBoards'
-import PageInvite from 'screensPublic/PageInvite'
+import PageInviteAuthenteticated from 'screens/PageInvite'
+import PageInvitePublic from 'screensPublic/PageInvite'
 import SideMenu from './SideMenu'
 
 
@@ -177,9 +176,6 @@ export const AuthenticatedRoutes = (): ReactElement => {
       <Route path="/b/:boardId">
         <BoardRoutes />
       </Route>
-      <Route exact path={['/', '/login']}>
-        <Redirect to="/b" />
-      </Route>
       <Route>
         <Layout className={css`height:100vh;`}>
           <SideMenu />
@@ -195,6 +191,9 @@ export const AuthenticatedRoutes = (): ReactElement => {
             }
             >
               <Switch>
+                <Route path="/p/invites/:inviteId">
+                  <PageInviteAuthenteticated />
+                </Route>
                 <Route path="/account-settings">
                   <AccountSettings />
                 </Route>
@@ -209,10 +208,12 @@ export const AuthenticatedRoutes = (): ReactElement => {
           </Layout.Content>
         </Layout>
       </Route>
+      <Route exact path={['/', '/login']}>
+        <Redirect to="/b" />
+      </Route>
     </Switch>
   )
 }
-
 
 const NotAuthenticatedRoutes = () => (
   <Layout className={css`height:100vh;`}>
@@ -220,22 +221,24 @@ const NotAuthenticatedRoutes = () => (
       <Route path="/login">
         <PageLogin />
       </Route>
+      <Route path="/p/invites/:inviteId">
+        <Layout className={css`height:100vh;`}>
+          <PageInvitePublic />
+        </Layout>
+      </Route>
       <Route>
         <Redirect to="/login" />
       </Route>
+
     </Switch>
   </Layout>
 )
+
 
 export default (): ReactElement => {
   const [token] = useAuthToken()
   return (
     <Switch>
-      <Route path="/p/invites/:id">
-        <Layout className={css`height:100vh;`}>
-          <PageInvite />
-        </Layout>
-      </Route>
       <Route>
         { token ? <AuthenticatedRoutes /> : <NotAuthenticatedRoutes /> }
       </Route>

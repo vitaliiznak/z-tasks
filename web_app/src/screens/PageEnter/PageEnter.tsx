@@ -29,7 +29,7 @@ export default () => (
     </Card>
     <div className={css`width: 24px;`} />
     <Card
-      title={<h2>Signup</h2>}
+      title={<h2>Sign up</h2>}
       className={css`
                 max-width: 570px;
                 width: 500px;

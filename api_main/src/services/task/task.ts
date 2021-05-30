@@ -32,19 +32,19 @@ const SELECT_FIELDS = sql`
 `
 
 type TContext = {
-  insureDataFromBoardOfUser: string
+  performedByUser: string
 }
 
 const getById = (id: string, ctx?: TContext): Promise<TTask | null> => executeWithConnection(async (conn) => {
   let whereClause = sql`WHERE id = ${SqlString.escape(id)} `
 
-  if (ctx && ctx.insureDataFromBoardOfUser) {
+  if (ctx && ctx.performedByUser) {
     whereClause = sql`
         ${whereClause}
           AND
         ${TABLES.TASK}.board IN 
           (SELECT ${TABLES.BOARD_ACCOUNT}.board FROM ${TABLES.BOARD_ACCOUNT} WHERE ${TABLES.BOARD_ACCOUNT}.account
-            IN (${SqlString.escape(ctx.insureDataFromBoardOfUser)})
+            IN (${SqlString.escape(ctx.performedByUser)})
           )`
   }
 
@@ -70,9 +70,9 @@ const getById = (id: string, ctx?: TContext): Promise<TTask | null> => executeWi
 
 type TFilterList = {
   isArchived?: boolean
-  createdBy?: string[]
-  assigners?: string[]
-  priorities?: string[]
+  createdByAnyOf?: string[]
+  assignersAnyOf?: string[]
+  prioritiesAnyOf?: string[]
   searchTitle?: string
   searchDescription?: string
   board: string
@@ -80,13 +80,13 @@ type TFilterList = {
 const getList = (filter: TFilterList, ctx?: TContext): Promise<TTask[]> => executeWithConnection(async (conn) => {
   let whereClause = sql`WHERE TRUE `
 
-  if (ctx && ctx.insureDataFromBoardOfUser) {
+  if (ctx?.performedByUser) {
     whereClause = sql`
         ${whereClause}
           AND
         ${TABLES.TASK}.board IN 
           (SELECT ${TABLES.BOARD_ACCOUNT}.board FROM ${TABLES.BOARD_ACCOUNT} WHERE ${TABLES.BOARD_ACCOUNT}.account
-            IN (${SqlString.escape(ctx.insureDataFromBoardOfUser)})
+            IN (${SqlString.escape(ctx.performedByUser)})
           )`
   }
 
@@ -97,35 +97,35 @@ const getList = (filter: TFilterList, ctx?: TContext): Promise<TTask[]> => execu
         ${TABLES.TASK}.board = ${SqlString.escape(filter.board)} `
   }
 
-  if (filter && filter.isArchived !== undefined) {
+  if (filter?.isArchived !== undefined) {
     whereClause = sql`
         ${whereClause}
         AND
         ${TABLES.TASK}.is_archived = ${SqlString.escape(filter.isArchived)} `
   }
 
-  if (filter && filter.createdBy && filter.createdBy.length) {
+  if (filter?.createdByAnyOf?.length) {
     whereClause = sql`
         ${whereClause}
         AND ${TABLES.TASK}.created_by
         IN(
-          ${filter.createdBy.map((el) => SqlString.escape(el)).join(', ')})`
+          ${filter.createdByAnyOf.map((el) => SqlString.escape(el)).join(', ')})`
   }
 
-  if (filter && filter.assigners && filter.assigners.length) {
+  if (filter?.assignersAnyOf?.length) {
     whereClause = sql`
         ${whereClause}
         AND ${TABLES.TASK_ASSIGMENT}.account
-        IN(${filter.assigners.map((el) => SqlString.escape(el)).join(', ')})`
+        IN(${filter.assignersAnyOf.map((el) => SqlString.escape(el)).join(', ')})`
   }
-  if (filter && filter.priorities && filter.priorities.length) {
+  if (filter?.prioritiesAnyOf?.length) {
     whereClause = sql`
         ${whereClause}
         AND ${TABLES.TASK}.priority
         IN(
-          ${filter.priorities.map((el) => SqlString.escape(el)).join(', ')})`
+          ${filter.prioritiesAnyOf.map((el) => SqlString.escape(el)).join(', ')})`
   }
-  if (filter && filter.searchTitle && filter.searchTitle.length) {
+  if (filter?.searchTitle?.length) {
     whereClause = sql`
         ${whereClause}
         AND
@@ -133,7 +133,7 @@ const getList = (filter: TFilterList, ctx?: TContext): Promise<TTask[]> => execu
           ${SqlString.escape(filter.searchTitle)}
         )`
   }
-  if (filter && filter.searchDescription && filter.searchDescription.length) {
+  if (filter?.searchDescription?.length) {
     whereClause = sql`
         ${whereClause}
         AND
@@ -164,9 +164,9 @@ const getList = (filter: TFilterList, ctx?: TContext): Promise<TTask[]> => execu
 
 type TFilterListCount = {
   isArchived?: boolean
-  createdBy?: string[]
-  assigners?: string[]
-  priorities?: string[]
+  createdByAnyOf?: string[]
+  assignersAnyOf?: string[]
+  prioritiesAnyOf?: string[]
   searchTitle?: string
   searchDescription?: string
   board: string
@@ -175,46 +175,46 @@ type TFilterListCount = {
 const count = (filter: TFilterListCount, ctx?: TContext): Promise<number> => executeWithConnection(async (conn) => {
   let whereClause = sql`WHERE TRUE`
 
-  if (ctx && ctx.insureDataFromBoardOfUser) {
+  if (ctx?.performedByUser) {
     whereClause = sql`
       ${whereClause}
         AND
       ${TABLES.TASK}.board IN 
         (SELECT ${TABLES.BOARD_ACCOUNT}.board FROM ${TABLES.BOARD_ACCOUNT} WHERE ${TABLES.BOARD_ACCOUNT}.account
-          IN (${SqlString.escape(ctx.insureDataFromBoardOfUser)})
+          IN (${SqlString.escape(ctx.performedByUser)})
         )`
   }
 
-  if (filter && filter.isArchived !== undefined) {
+  if (filter?.isArchived !== undefined) {
     whereClause = sql`
       ${whereClause}
       AND
       ${TABLES.TASK}.is_archived = ${SqlString.escape(filter.isArchived)} `
   }
 
-  if (filter && filter.createdBy && filter.createdBy.length) {
+  if (filter?.createdByAnyOf?.length) {
     whereClause = sql`
       ${whereClause}
       AND ${TABLES.TASK}.created_by
       IN(
-        ${filter.createdBy.map((el) => SqlString.escape(el)).join(', ')})`
+        ${filter.createdByAnyOf.map((el) => SqlString.escape(el)).join(', ')})`
   }
 
-  if (filter && filter.assigners && filter.assigners.length) {
+  if (filter?.assignersAnyOf?.length) {
     whereClause = sql`
       ${whereClause}
       AND ${TABLES.TASK_ASSIGMENT}.account
       IN(
-        ${filter.assigners.map((el) => SqlString.escape(el)).join(', ')})`
+        ${filter.assignersAnyOf.map((el) => SqlString.escape(el)).join(', ')})`
   }
-  if (filter && filter.priorities && filter.priorities.length) {
+  if (filter?.prioritiesAnyOf?.length) {
     whereClause = sql`
       ${whereClause}
       AND ${TABLES.TASK}.priority
       IN(
-        ${filter.priorities.map((el) => SqlString.escape(el)).join(', ')})`
+        ${filter.prioritiesAnyOf.map((el) => SqlString.escape(el)).join(', ')})`
   }
-  if (filter && filter.searchTitle && filter.searchTitle.length) {
+  if (filter?.searchTitle?.length) {
     whereClause = sql`
       ${whereClause}
       AND
@@ -222,7 +222,7 @@ const count = (filter: TFilterListCount, ctx?: TContext): Promise<number> => exe
         ${SqlString.escape(filter.searchTitle)}
       )`
   }
-  if (filter && filter.searchDescription && filter.searchDescription.length) {
+  if (filter?.searchDescription?.length) {
     whereClause = sql`
       ${whereClause}
       AND
