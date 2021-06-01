@@ -95,7 +95,7 @@ const getList = (filter: TFilter, ctx?: TContext): Promise<TInvite[]> => execute
         ${filter.createdByAnyOf.map((el) => SqlString.escape(el)).join(', ')})`
   }
   // @TODO change this logic
-  if (filter?.state_NOTAnyOf) {
+  if (filter?.state_NOTAnyOf?.length) {
     if (filter.state_NOTAnyOf.includes('NEW')) { // or any other not expired state
       whereClause = sql`
         ${whereClause}
@@ -112,20 +112,22 @@ const getList = (filter: TFilter, ctx?: TContext): Promise<TInvite[]> => execute
     }
   }
 
-  if (filter?.stateAnyOf) {
+  if (filter?.stateAnyOf?.length) {
     let whereClausesOr: string[] = []
-    let statyArray = filter.stateAnyOf
-    if (statyArray.includes('EXPIRED')) {
+    let stateArray = filter.stateAnyOf
+    if (stateArray.includes('EXPIRED')) {
       whereClausesOr.push(sql`(${TABLES.INVITE_TO_BOARD}.expiration_time <= now() AND ${TABLES.INVITE_TO_BOARD}.state = 'NEW' )`)
-      statyArray = statyArray.filter(el => el != 'EXPIRED')
+      stateArray = stateArray.filter(el => el != 'EXPIRED')
     }
 
-    if (statyArray.includes('NEW')) {
+    if (stateArray.includes('NEW')) {
       whereClausesOr.push(sql`( ${TABLES.INVITE_TO_BOARD}.expiration_time >= now() AND ${TABLES.INVITE_TO_BOARD}.state = 'NEW' )`)
-      statyArray = statyArray.filter(el => el != 'NEW')
+      stateArray = stateArray.filter(el => el != 'NEW')
     }
-    whereClausesOr.push(sql`${TABLES.INVITE_TO_BOARD}.state IN (${statyArray.map((el) => SqlString.escape(el)).join(', ')})`)
-    whereClause = `${whereClause} AND (${whereClausesOr.join(' OR ')})`
+    if (stateArray.length) {
+      whereClausesOr.push(sql`${TABLES.INVITE_TO_BOARD}.state IN (${stateArray.map((el) => SqlString.escape(el)).join(', ')})`)
+      whereClause = `${whereClause} AND (${whereClausesOr.join(' OR ')})`
+    }
   }
 
   const sqlQuery = sql`
@@ -135,7 +137,7 @@ const getList = (filter: TFilter, ctx?: TContext): Promise<TInvite[]> => execute
       ${whereClause}
       ORDER BY ${TABLES.INVITE_TO_BOARD}.created_at DESC
         `
-
+  console.log('@sqlQuery', sqlQuery)
   const result = await conn.query(sqlQuery)
   return result.rows
 })

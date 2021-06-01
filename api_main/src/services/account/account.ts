@@ -124,6 +124,7 @@ const update = (id: string, {
     mimetype: string
     encoding: string
     ext: string
+    originFileObj: any
   }
   removeAvatar?: boolean
 }): Promise<TAccount> => executeWithConnection(async (conn) => {

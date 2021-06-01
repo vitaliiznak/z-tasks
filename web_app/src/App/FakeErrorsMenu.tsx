@@ -31,7 +31,7 @@ export default () => {
             notExistingQuery()
           }}
         >
-          Make Graphql Error
+          Rise Graphql Error
         </Button>
       </Tooltip>
       <Tooltip title="For testing purposes" color="orange">
@@ -43,7 +43,7 @@ export default () => {
             makeError({ error: 'error here' })
           }}
         >
-          Make Tree Render Error
+          Rise Tree Render Error
         </Button>
       </Tooltip>
     </div>

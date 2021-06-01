@@ -1,6 +1,6 @@
 import React from 'react'
 import {
-  Comment, Form, Button, Input, message,
+  Comment, Form, Button, Input, message, Tooltip,
 } from 'antd'
 import { css } from '@emotion/css'
 import { useMutation } from '@apollo/client'
@@ -10,13 +10,15 @@ import { gUserMe } from 'appState/appState'
 
 const { TextArea } = Input
 type FormProps = React.ComponentProps<typeof Form>
-export default ({
+const AddComment = ({
   task,
   previous,
+  isArchived,
   onFinish: onFinishArg = () => {},
 }:
 {
   task?: string,
+  isArchived?: boolean,
   previous?: string,
   onFinish?: () => void
 }) => {
@@ -29,7 +31,7 @@ export default ({
     loading: mutationReplyLoading,
     error: mutationReplyError,
   }] = useMutation(CREATE_REPLY_COMMENT)
-  const userMe = gUserMe()
+  const accountMe = gUserMe()
 
   const successMessageFn = () => {
     message.success('Comment added')
@@ -61,19 +63,32 @@ export default ({
       }).then(successMessageFn)
     }
   }
+
   return (
     <Comment
       avatar={(
         <AvatarZ
-          avatarSrc={userMe?.avatar?.uri}
-          fullName={userMe?.fullName}
+          avatarSrc={accountMe?.avatar?.uri}
+          fullName={accountMe?.fullName}
         />
       )}
       content={(
         <Form form={form} onFinish={onFinish}>
-          <Form.Item name="comment" rules={[{ required: true }]}>
-            <TextArea autoSize={{ minRows: 3, maxRows: 5 }} />
-          </Form.Item>
+
+          {isArchived
+            ? (
+              <Tooltip title="You can not comment on archived task">
+                <Form.Item>
+                  <TextArea disabled autoSize={{ minRows: 3, maxRows: 5 }} />
+                </Form.Item>
+              </Tooltip>
+            )
+            : (
+              <Form.Item name="comment" rules={[{ required: true }]}>
+                <TextArea autoSize={{ minRows: 3, maxRows: 5 }} />
+              </Form.Item>
+            )}
+
           <Form.Item
             className={
               css`
@@ -83,17 +98,34 @@ export default ({
           `
             }
           >
-            <Button
-              htmlType="submit"
-              loading={mutationCreateLoading || mutationReplyLoading}
-              ghost
-              type="primary"
-            >
-              Send
-            </Button>
+            {isArchived
+              ? (
+                <Tooltip title="You can not comment on archived task">
+                  <Button
+                    disabled
+                    ghost
+                    type="primary"
+                  >
+                    Send
+                  </Button>
+                </Tooltip>
+              )
+              : (
+                <Button
+                  htmlType="submit"
+                  loading={mutationCreateLoading || mutationReplyLoading}
+                  ghost
+                  type="primary"
+                >
+                  Send
+                </Button>
+              )}
+
           </Form.Item>
         </Form>
       )}
     />
   )
 }
+
+export default AddComment

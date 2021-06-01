@@ -33,8 +33,7 @@ const getById = (id: string): Promise<TComment | null> => executeWithConnection(
             ${TABLES.COMMENT}.previous AS "replyToUserId"
             FROM ${TABLES.COMMENT}
             WHERE ${TABLES.COMMENT}.id = ${escape(id)}
-            AND previous IS NULL
-            ORDER BY ${TABLES.COMMENT}.id ASC
+            ORDER BY ${TABLES.COMMENT}.created_at DESC
           )
           UNION
           (SELECT
@@ -48,7 +47,7 @@ const getById = (id: string): Promise<TComment | null> => executeWithConnection(
             a."createdById" AS "replyToUserId"
             FROM ${TABLES.COMMENT} replies
             INNER JOIN accum a ON a.id = replies.previous
-            ORDER BY replies ASC
+            ORDER BY replies.created_at DESC
           ) 
         ) 
         SELECT
@@ -92,7 +91,7 @@ const getList = (filter: {
             FROM ${TABLES.COMMENT}
             ${whereClause}
             AND previous IS NULL
-            ORDER BY ${TABLES.COMMENT}.id ASC
+           ORDER BY ${TABLES.COMMENT}.created_at DESC
           )
           UNION
           (SELECT
@@ -106,7 +105,7 @@ const getList = (filter: {
             a."createdById" AS "replyToUserId"
             FROM ${TABLES.COMMENT} replies
             INNER JOIN accum a ON a.id = replies.previous
-            ORDER BY replies ASC
+            ORDER BY replies.created_at DESC
           ) 
         ) 
         SELECT
@@ -212,7 +211,8 @@ const createReply = ({
           VALUES ${CommentInsertValues.map((row) => `( ${row} )`).join(', ')}
           RETURNING ${SELECT_FIELDS};
           `
-    const { rows: [insertedComment] } = await conn.query(sqlStr)
+    const queryResult = await conn.query(sqlStr)
+    const { rows: [insertedComment] } = queryResult
     return getById(insertedComment.id)
   },
 )

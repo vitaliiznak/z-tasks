@@ -176,6 +176,9 @@ export const AuthenticatedRoutes = (): ReactElement => {
       <Route path="/b/:boardId">
         <BoardRoutes />
       </Route>
+      <Route exact path={['/', '/login']}>
+        <Redirect to="/b" />
+      </Route>
       <Route>
         <Layout className={css`height:100vh;`}>
           <SideMenu />
@@ -191,15 +194,16 @@ export const AuthenticatedRoutes = (): ReactElement => {
             }
             >
               <Switch>
+                <Route exact path="/b">
+                  <PageSelectBoard />
+                </Route>
                 <Route path="/p/invites/:inviteId">
                   <PageInviteAuthenteticated />
                 </Route>
                 <Route path="/account-settings">
                   <AccountSettings />
                 </Route>
-                <Route path="/b">
-                  <PageSelectBoard />
-                </Route>
+
                 <Route path="/boards">
                   <PageBoardList title={<h3>Your boards</h3>} />
                 </Route>
@@ -208,9 +212,8 @@ export const AuthenticatedRoutes = (): ReactElement => {
           </Layout.Content>
         </Layout>
       </Route>
-      <Route exact path={['/', '/login']}>
-        <Redirect to="/b" />
-      </Route>
+
+
     </Switch>
   )
 }

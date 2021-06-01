@@ -75,8 +75,6 @@ const getList = (ctx: TContext): Promise<TUser[]> => executeWithConnection(async
       ${whereClause}
       ORDER BY ${TABLES.ACCOUNT}.created_at DESC
     `
-
-  console.log('whereClause', sqlQuery)
   const result = await conn.query(sqlQuery)
   return result.rows
 })

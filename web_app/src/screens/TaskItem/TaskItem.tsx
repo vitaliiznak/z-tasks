@@ -5,31 +5,56 @@ import {
 import { css } from '@emotion/css'
 import { useMutation, useQuery } from '@apollo/client'
 import { PRIORITY } from 'appConstants'
-import { GET_TASK, UNARCHIVE_TASK } from 'queries'
-import { EditOutlined } from '@ant-design/icons'
+import { ARCHIVE_TASK, GET_TASK, UNARCHIVE_TASK } from 'queries'
+import { EditOutlined, ExclamationCircleOutlined } from '@ant-design/icons'
 import moment from 'moment'
+
 
 import UserCart from 'screens/components/CreatedByAssignedCard'
 import { GetTask } from 'queries/types/GetTask'
+import { Link } from 'react-router-dom'
 import TaskAddAssigneers from './TaskAddAssigneers'
 import Comments from './Comments'
 
+const { confirm } = Modal
+
 const { Paragraph, Title } = Typography
-export default ({ id } : { id: string }) => {
-  const [UnarchiveTask] = useMutation(UNARCHIVE_TASK)
+const TaskItem = ({ id } : { id: string }) => {
+  const [unarchiveTask] = useMutation(UNARCHIVE_TASK)
+  const [archiveTask] = useMutation(ARCHIVE_TASK)
   const { loading: loadingTask, error: errorTask, data: dataTask } = useQuery<GetTask>(GET_TASK, { variables: { id } })
   const [assignTaskTaskModalParams, setAssignTaskTaskModal] = useState<{ taskId: string } | null>(null)
 
   const onUnarchiveTask = () => {
-    UnarchiveTask({
+    unarchiveTask({
       variables: {
         id,
       },
-      refetchQueries: ['GetTasks'],
+      refetchQueries: ['GetTasks', 'GetTask'],
     })
       .then(() => {
         message.success('Task has been unarchived!')
       })
+  }
+
+  const onArchiveTask = () => {
+    confirm({
+      title: 'Do you want to archive this task?',
+      icon: <ExclamationCircleOutlined />,
+      content: '',
+      okText: 'Yes',
+      onOk() {
+        archiveTask({
+          variables: {
+            id,
+          },
+          refetchQueries: ['GetTasks', 'GetTask'],
+        })
+          .then(() => {
+            message.success('Task has been unarchived!')
+          })
+      },
+    })
   }
 
   const onFinishAssigment = () => {
@@ -117,11 +142,16 @@ export default ({ id } : { id: string }) => {
             <h6>
               Assigners:
               {isArchived
-              && (
-                <Tooltip title="Change assigners" className={css`margin-left: 8px;`}>
-                  <Button onClick={onChangeAssigners} ghost type="primary" icon={<EditOutlined />} size="small" />
-                </Tooltip>
-              )}
+                ? (
+                  <Tooltip title="You can not change assigners for archived task" className={css`margin-left: 8px;`}>
+                    <Button disabled ghost icon={<EditOutlined />} size="small" />
+                  </Tooltip>
+                )
+                : (
+                  <Tooltip title="Change assigners" className={css`margin-left: 8px;`}>
+                    <Button onClick={onChangeAssigners} ghost type="primary" icon={<EditOutlined />} size="small" />
+                  </Tooltip>
+                )}
             </h6>
             {assigners.map(({
               fullName, email, id: idArg, avatar,
@@ -152,7 +182,11 @@ export default ({ id } : { id: string }) => {
             <br />
             by
             {' '}
-            {`${createdBy.fullName} ${createdBy.email}` }
+            <Link to={`/members/${id}`}>
+              {' '}
+              {`${createdBy.fullName} - ${createdBy.email}` }
+              {' '}
+            </Link>
           </small>
           {isArchived ? (
             <Button
@@ -171,10 +205,31 @@ export default ({ id } : { id: string }) => {
             >
               Unarchive
             </Button>
-          ) : null}
+          )
+            : (
+              <Button
+                ghost
+                type="primary"
+                className={css`
+                  margin-left: auto;
+                  color: orange;
+                  border-color: orange;
+                  &:focus, &:focus, &:hover {
+                    color: orange;
+                    border-color: orange;
+                  } 
+                `}
+                onClick={onArchiveTask}
+              >
+                Archive task
+              </Button>
+            )}
         </div>
       </Card>
-      <Comments task={id} isReplyAllowed={!isArchived} />
+      <Comments task={id} isArchived={isArchived} />
     </>
   )
 }
+
+
+export default TaskItem

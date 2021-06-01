@@ -56,7 +56,7 @@ export default () => {
     )
   }
 
-  const filter: TypeTaskFilter = { [lastLocationPart === 'assigned' ? 'assigners' : 'createdBy']: [id] }
+  const filter: TypeTaskFilter = { [lastLocationPart === 'assigned' ? 'assignersAnyOf' : 'createdByAnyOf']: [id] }
   if (!showArchiveTasks) {
     filter.isArchived = false
   }

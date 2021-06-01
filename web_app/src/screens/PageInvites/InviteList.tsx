@@ -108,14 +108,25 @@ const InviteList = ({
         columns={columns}
         dataSource={data && data.inviteGetList ? data.inviteGetList as any[] : []}
         expandable={{
-          expandedRowRender: ({ description }) => (
-            <div className={css`padding: 8px;`}>
-              <h4>Invitation message:</h4>
-              <p>
-                { description }
-              </p>
-            </div>
-          )
+          expandedRowRender: ({ id, description }) => {
+            console.log('@link', `${window.location.protocol}//${window.location.host}/p/invites/${1}`)
+            return (
+              <div className={css`padding: 8px;`}>
+                <span className={css`font-size: 14px;padding-right: 8px;`}>Invitation link: </span>
+                <Link
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  to={`/p/invites/${id}`}
+                >
+                  {`${window.location.protocol}//${window.location.host}/p/invites/${id}`}
+                </Link>
+                <div className={css`font-size: 14px;padding-top: 8px;`}>Invitation message:</div>
+                <p>
+                  { description }
+                </p>
+              </div>
+            )
+          }
         }}
       />
 

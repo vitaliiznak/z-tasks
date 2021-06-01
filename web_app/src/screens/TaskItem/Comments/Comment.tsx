@@ -8,7 +8,7 @@ import AvatarZ from 'screens/components/AvatarZ'
 import AddComment from './AddComment'
 
 const Comment = ({
-  isReplyAllowed,
+  isArchived = false,
   className,
   linkAuthor,
   comment: {
@@ -21,7 +21,7 @@ const Comment = ({
 }:
 {
   className?: string,
-  isReplyAllowed: boolean,
+  isArchived: boolean,
   linkAuthor: string,
   comment: {
     id: string,
@@ -58,7 +58,7 @@ const Comment = ({
         }
         avatar={(
           <AvatarZ
-            avatarSrc={createdBy.avatar.uri}
+            avatarSrc={createdBy.avatar?.uri}
             fullName={createdBy.fullName}
           />
         )}
@@ -78,15 +78,19 @@ const Comment = ({
           </Tooltip>
         )}
         actions={[
-          isReplyAllowed
-            ? isReplyActive
+          isArchived
+            ? (
+              <Tooltip title="You can not reply on archive task">
+                <Button disabled key="replyTo" size="small" type="text">Reply</Button>
+              </Tooltip>
+            )
+            : isReplyActive
               ? (
                 <Button key="replyTo" size="small" type="text" onClick={onReplyClose}>
                   <CloseOutlined />
                 </Button>
               )
-              : <Button key="replyTo" size="small" type="text" onClick={onReply}>Reply</Button>
-            : null,
+              : <Button key="replyTo" size="small" type="text" onClick={onReply}>Reply</Button>,
         ]}
       />
       <div className={

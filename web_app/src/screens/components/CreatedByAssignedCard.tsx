@@ -5,7 +5,7 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import AvatarZ from './AvatarZ'
 
-export default ({
+const AddComment = ({
   id,
   avatar,
   fullName,
@@ -79,3 +79,6 @@ export default ({
     </Tooltip>
   )
 }
+
+
+export default AddComment

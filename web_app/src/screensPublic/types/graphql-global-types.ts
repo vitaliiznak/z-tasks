@@ -64,25 +64,6 @@ export interface CommentReplyCreateInput {
   task?: string | null;
 }
 
-export interface InviteCreateInput {
-  boardId: string;
-  description: string;
-  expirationTime?: any | null;
-}
-
-export interface InviteJoinBoardInput {
-  id: string;
-  token: string;
-}
-
-export interface InviteListFilterInput {
-  board?: string | null;
-  createdBy?: string | null;
-  expirationTime?: any | null;
-  stateAnyOf?: (string | null)[] | null;
-  state_NOTAnyOf?: (string | null)[] | null;
-}
-
 export interface TaskCountFilterInput {
   assignersAnyOf?: (string | null)[] | null;
   createdByAnyOf?: (string | null)[] | null;

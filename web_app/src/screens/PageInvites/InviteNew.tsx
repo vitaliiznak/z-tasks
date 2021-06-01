@@ -6,6 +6,7 @@ import { css } from '@emotion/css'
 import { useMutation } from '@apollo/client'
 import { CREATE_INVITE } from 'queries'
 import { gSelectedBoard } from 'appState/appState'
+import { Link } from 'react-router-dom'
 
 const { TextArea } = Input
 
@@ -61,7 +62,13 @@ const InviteNew = ({
           Invitation link:
           <br />
           <strong className={css`font-size:11px;`}>
-            {`${window.location.protocol}//${window.location.host}/p/invites/${invite.id}`}
+            <Link
+              target="_blank"
+              rel="noopener noreferrer"
+              to={`/p/invites/${invite.id}`}
+            >
+              {`${window.location.protocol}//${window.location.host}/p/invites/${invite.id}`}
+            </Link>
           </strong>
           <br />
           Token:

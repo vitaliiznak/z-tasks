@@ -8,7 +8,7 @@ import { GetComments } from 'queries/types/GetComments'
 import Comment from './Comment'
 
 interface TCommentsProps {
-  isReplyAllowed: boolean
+  isArchived: boolean
   boardId: string
   filter: {
     task: string
@@ -16,7 +16,7 @@ interface TCommentsProps {
   }
 }
 
-const CommentsList = ({ filter, boardId, isReplyAllowed }: TCommentsProps) => {
+const CommentsList = ({ filter, boardId, isArchived }: TCommentsProps) => {
   const { data: commentsQueryData } = useQuery<GetComments>(GET_COMMENTS, {
     variables: {
       filter,
@@ -54,7 +54,7 @@ const CommentsList = ({ filter, boardId, isReplyAllowed }: TCommentsProps) => {
 
   const commentsToShow = Object.values(commentsMap)
   return !commentsToShow.length
-    ? <div className={css`text-align: center;`}>no comments</div>
+    ? <div className={css`text-align: center;`}>no comments yet</div>
     : (
       <>
         {commentsToShow.map((comment: any) => (
@@ -82,7 +82,7 @@ const CommentsList = ({ filter, boardId, isReplyAllowed }: TCommentsProps) => {
                   </p>
                 ),
               }}
-              isReplyAllowed={isReplyAllowed}
+              isArchived={isArchived}
               className={css`
           margin-left: ${comment.previous ? '20px' : '0'};
         `}

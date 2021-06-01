@@ -18,7 +18,6 @@ import { gBoards, gSelectedBoard, gUserMe } from 'appState/appState'
 import { AUTH_TOKEN_LOCALSTORAGE_KEY } from '../appConstants'
 import FakeErrorsMenu from './FakeErrorsMenu'
 
-
 const { Option } = Select
 
 const cssSider = css`
@@ -36,7 +35,7 @@ const cssStickyMenu = css`
   overflow-y: auto;
   position: sticky;
   margin-top: 44px;
-  top: 0;`
+  top: 44px;`
 
 const cssLogo = css`
   overflow-y: auto;
@@ -99,7 +98,7 @@ const stylesBoardOption = css`
 
 const { Sider } = Layout
 export default (): ReactElement => {
-  const userMe = gUserMe()
+  const accountMe = gUserMe()
   const history = useHistory()
   const isProfileRoute = useRouteMatch('/members')
   const [isProfileExpanded, setProfileExpanded] = useState(Boolean(isProfileRoute))
@@ -163,7 +162,6 @@ export default (): ReactElement => {
       </div>
     </div>
   )
-
 
   const selectedBoard = gSelectedBoard()
   return (
@@ -230,13 +228,13 @@ export default (): ReactElement => {
             <div className={css`text-align: left;`}>
               <AvatarZ
                 size="default"
-                fullName={userMe?.fullName}
-                avatarSrc={userMe?.avatar?.uri}
+                fullName={accountMe?.fullName}
+                avatarSrc={accountMe?.avatar?.uri}
                 className={css`margin-right: 10px !important;`}
               />
-              <strong>{userMe?.fullName || <Spin />}</strong>
+              <strong>{accountMe?.fullName || <Spin />}</strong>
             </div>
-            <small>{userMe?.email}</small>
+            <small>{accountMe?.email}</small>
           </div>
 
           {isProfileExpanded
@@ -355,9 +353,9 @@ export default (): ReactElement => {
                       ant-menu-item
                       ${cssMenuItem}
                     `}
-                  to={`/b/${selectedBoard?.id}/members/${userMe?.id}/created-by`}
+                  to={`/b/${selectedBoard?.id}/members/${accountMe?.id}/created-by`}
                 >
-                  Assigned to me
+                  Owned by me
                 </NavLink>
               </Tooltip>
 
@@ -368,9 +366,9 @@ export default (): ReactElement => {
                         ant-menu-item
                         ${cssMenuItem}
                       `}
-                  to={`/b/${selectedBoard?.id}/members/${userMe?.id}/assigned`}
+                  to={`/b/${selectedBoard?.id}/members/${accountMe?.id}/assigned`}
                 >
-                  Owned by me
+                  Assigned to me
                 </NavLink>
               </Tooltip>
 

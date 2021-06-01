@@ -162,6 +162,14 @@ mutation UnarchiveTask($id: ID!) {
   }
 }`
 
+export const ARCHIVE_TASK = gql`
+mutation ArchiveTask($id: ID!) {
+  taskArchive(id: $id) {
+    id
+  }
+}
+`
+
 export const CREATE_TASK = gql`
   mutation CreateTask($input: TaskCreateInput!) {
     taskCreate(input: $input) {
@@ -294,13 +302,7 @@ mutation ChangeTaskState($id: ID!, $state: String!) {
   }
 }
 `
-export const ARCHIVE_TASK = gql`
-mutation ArchiveTask($id: ID!) {
-  taskArchive(id: $id) {
-    id
-  }
-}
-`
+
 export const REMOVE_TASK = gql`
     mutation RemoveTasks($id: ID!) {
       taskRemove(id: $id)
@@ -360,7 +362,7 @@ query GetInvites ($filter: InviteListFilterInput) {
 
 
 export const GET_INVITE_BY_ID = gql`
-query GetInvites ($id: ID!) {
+query GetInviteByID ($id: ID!) {
   inviteGetById(id: $id) {
     id
     board {

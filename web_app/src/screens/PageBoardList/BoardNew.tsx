@@ -1,4 +1,4 @@
-import React, { FunctionComponent, ReactElement } from 'react'
+import React, { FunctionComponent } from 'react'
 import {
   Form, Input, Button, message,
 } from 'antd'
@@ -55,7 +55,7 @@ export default ({
       message.success('Board has been created!')
       form.resetFields()
     }).catch((err) => {
-      console.log(err)
+      console.error(err)
     })
   }
 

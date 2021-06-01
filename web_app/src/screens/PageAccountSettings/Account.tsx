@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import {
-  Form, Input, Button, Card, Upload, Modal,
+  Form, Input, Button, Card, Upload, Modal, Spin,
 } from 'antd'
 import { css } from '@emotion/css'
 import { useMutation } from '@apollo/client'
@@ -27,10 +27,10 @@ export default () => {
     loading: updateAccountLoading,
   }] = useMutation<AccountUpdate>(UPDATE_ACCOUNT)
 
-  const userMe = gUserMe()
+  const accountMe = gUserMe()
 
   useEffect(() => {
-    const avtarToUse = userMe?.avatar || userMe?.avatar
+    const avtarToUse = accountMe?.avatar || accountMe?.avatar
     if (avtarToUse) {
       const {
         uri,
@@ -46,7 +46,7 @@ export default () => {
       setFileList([])
     }
     return () => {}
-  }, [updateAccountReturnData, userMe])
+  }, [updateAccountReturnData, accountMe])
 
   const onFinish: FormProps['onFinish'] = (valuesArg: any) => {
     const values = valuesArg
@@ -57,14 +57,13 @@ export default () => {
       originFileObj: fileList[0].originFileObj,
     } : undefined
 
-    values.removeAvatar = Boolean(!fileList.length && userMe?.avatar?.uri)
-
+    values.removeAvatar = Boolean(!fileList.length && accountMe?.avatar?.uri)
     updateAccount({
       variables: {
-        id: userMe?.id,
+        id: accountMe?.id,
         update: values,
       },
-      refetchQueries: ['userMe'],
+      refetchQueries: ['accountMe'],
     }).then(() => {
       Modal.info({
         title: 'Your account has been updated!',
@@ -84,7 +83,7 @@ export default () => {
 
   const onReset = () => {
     form.resetFields()
-    const avtarToUse = userMe?.avatar
+    const avtarToUse = accountMe?.avatar
     if (avtarToUse) {
       const {
         uri,
@@ -98,13 +97,9 @@ export default () => {
       }])
     }
   }
-
-
-  const initialValues: any = {
-    fullName: userMe?.fullName,
-    email: userMe?.email,
+  if (!accountMe) {
+    return <Spin />
   }
-
   return (
     <Card
       title={(
@@ -116,7 +111,10 @@ export default () => {
       <Form
         form={form}
         name="Account settings"
-        initialValues={initialValues}
+        initialValues={{
+          fullName: accountMe?.fullName,
+          email: accountMe?.email,
+        }}
         onFinish={onFinish}
         onFinishFailed={onFinishFailed}
       >

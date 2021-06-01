@@ -262,6 +262,14 @@ function Dashboard() {
             {tasksData?.tasks?.length}
             {' '}
             active task(s)
+            <h1
+              className={css`
+                margin-left: 30px;
+                display: inline-block;
+              `}
+            >
+              drag and drop task between columns
+            </h1>
           </div>
           <Button
             size="large"

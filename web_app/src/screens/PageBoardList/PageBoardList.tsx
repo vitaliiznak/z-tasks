@@ -57,7 +57,7 @@ export default ({
     {
       title: 'Title',
       key: 'title',
-      render: ({ id, titleArg }: any) => (
+      render: ({ id, title: titleArg }: any) => (
         <div>
           <div>
             <Link type="primary" target="_blank" to={`/b/${id}`}>

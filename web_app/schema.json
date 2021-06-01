@@ -1750,13 +1750,9 @@
               }
             ],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "Invite",
-                "ofType": null
-              }
+              "kind": "OBJECT",
+              "name": "Invite",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -2062,7 +2058,7 @@
         "fields": null,
         "inputFields": [
           {
-            "name": "assigners",
+            "name": "assignersAnyOf",
             "description": null,
             "type": {
               "kind": "LIST",
@@ -2078,7 +2074,7 @@
             "deprecationReason": null
           },
           {
-            "name": "createdBy",
+            "name": "createdByAnyOf",
             "description": null,
             "type": {
               "kind": "LIST",
@@ -2094,7 +2090,7 @@
             "deprecationReason": null
           },
           {
-            "name": "priorities",
+            "name": "prioritiesAnyOf",
             "description": null,
             "type": {
               "kind": "LIST",
@@ -2170,7 +2166,7 @@
         "fields": null,
         "inputFields": [
           {
-            "name": "assigners",
+            "name": "assignersAnyOf",
             "description": null,
             "type": {
               "kind": "LIST",
@@ -2186,7 +2182,7 @@
             "deprecationReason": null
           },
           {
-            "name": "createdBy",
+            "name": "createdByAnyOf",
             "description": null,
             "type": {
               "kind": "LIST",
@@ -2202,7 +2198,7 @@
             "deprecationReason": null
           },
           {
-            "name": "priorities",
+            "name": "prioritiesAnyOf",
             "description": null,
             "type": {
               "kind": "LIST",
@@ -3354,22 +3350,6 @@
         "fields": null,
         "inputFields": [
           {
-            "name": "token",
-            "description": null,
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "id",
             "description": null,
             "type": {
@@ -3378,6 +3358,22 @@
               "ofType": {
                 "kind": "SCALAR",
                 "name": "ID",
+                "ofType": null
+              }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "token",
+            "description": null,
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
                 "ofType": null
               }
             },
@@ -3398,7 +3394,7 @@
         "fields": null,
         "inputFields": [
           {
-            "name": "boardId",
+            "name": "board",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -3428,6 +3424,38 @@
               "kind": "SCALAR",
               "name": "Date",
               "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "stateAnyOf",
+            "description": null,
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "state_NOTAnyOf",
+            "description": null,
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
             },
             "defaultValue": null,
             "isDeprecated": false,
@@ -3521,15 +3549,15 @@
             "deprecationReason": null
           },
           {
-            "name": "boardId",
+            "name": "board",
             "description": null,
             "args": [],
             "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
-                "kind": "SCALAR",
-                "name": "ID",
+                "kind": "OBJECT",
+                "name": "Board",
                 "ofType": null
               }
             },

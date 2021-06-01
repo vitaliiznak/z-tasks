@@ -2,6 +2,7 @@ import { ApolloServer, gql } from 'apollo-server-express'
 import express from 'express'
 import { merge } from 'lodash'
 import cors from 'cors'
+import { GraphQLUpload, graphqlUploadExpress } from 'graphql-upload'
 
 import { constraintDirectiveTypeDefs } from 'graphql-constraint-directive'
 import jwt from 'jsonwebtoken'
@@ -79,7 +80,7 @@ const typeDefs = [
 
     scalar ValidateString
     scalar ValidateNumber
-
+    
     scalar Date
     scalar Time
     scalar DateTime
@@ -196,7 +197,7 @@ const resolvers = merge(
     Currency: CurrencyResolver,
     JSON: JSONResolver,
     JSONObject: JSONObjectResolver,
-    Byte: ByteResolver,
+    Byte: ByteResolver
   },
   AccountResolvers,
   TaskResolvers,

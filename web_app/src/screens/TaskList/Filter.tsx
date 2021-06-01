@@ -158,7 +158,7 @@ export default ({ onFilter = () => {} }: TypeProps) => {
           name="searchTerm"
           className={cssFormItem}
         >
-          <Input placeholder="Search by text" />
+          <Input placeholder="Search by title (description optionaly)" />
         </Form.Item>
         <div className={css`width: 10px;`} />
         <Form.Item

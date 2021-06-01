@@ -46,9 +46,11 @@ const accountUpdate = (
   }, // {req, res}
   _context,
   _info,
-) => AccountService.update(id, {
-  fullName, email, avatar, removeAvatar,
-})
+) => {
+  return AccountService.update(id, {
+    fullName, email, avatar, removeAvatar,
+  })
+}
 
 export default {
   Query: {

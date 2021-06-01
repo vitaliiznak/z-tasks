@@ -108,8 +108,7 @@ const getList = (filter: TFilterList, ctx?: TContext): Promise<TTask[]> => execu
     whereClause = sql`
         ${whereClause}
         AND ${TABLES.TASK}.created_by
-        IN(
-          ${filter.createdByAnyOf.map((el) => SqlString.escape(el)).join(', ')})`
+        IN(${filter.createdByAnyOf.map((el) => SqlString.escape(el)).join(', ')})`
   }
 
   if (filter?.assignersAnyOf?.length) {
@@ -157,7 +156,6 @@ const getList = (filter: TFilterList, ctx?: TContext): Promise<TTask[]> => execu
         GROUP BY ${TABLES.TASK}.id
         ORDER BY ${TABLES.TASK}.created_at DESC
     `
-
   const result = await conn.query(sqlQuery)
   return result.rows
 })

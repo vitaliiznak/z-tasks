@@ -6,7 +6,7 @@ type TypePropsAvatar = React.ComponentProps<typeof AvatarAntd> & {
   avatarSrc?: string,
   fullName?: string
 }
-export default ({
+const AvatarZ = ({
   className = '',
   children,
   avatarSrc,
@@ -30,7 +30,8 @@ export default ({
     >
       {fullName.substring(0, 2)}
       {children}
-      BLABLA
     </AvatarAntd>
   )
 }
+
+export default AvatarZ
